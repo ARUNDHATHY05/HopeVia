@@ -1,0 +1,173 @@
+{% extends 'Admin/Header.html' %}
+{% load static %}
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assign Educational Staff</title>
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #000; /* Black background */
+            margin: 0;
+            padding: 40px;
+        }
+
+        /* Form Table Styling */
+        table {
+            width: 50%;
+            margin: 0 auto;
+            border-collapse: collapse;
+            background: linear-gradient(135deg, rgba(40, 70, 100, 0.9), rgba(80, 140, 200, 0.9)); /* Cool blue gradient */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4); /* Enhanced shadow */
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2); /* Subtle white border */
+        }
+
+        table td {
+            padding: 15px 20px;
+            font-size: 16px;
+            color: #fff; /* White text for contrast */
+            text-align: left;
+        }
+
+        table tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.05); /* Slight overlay for even rows */
+        }
+
+        table tr:hover {
+            background: rgba(255, 255, 255, 0.15); /* Hover effect */
+        }
+
+        /* Input Fields */
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3); /* Light border */
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.1); /* Transparent background */
+            color: #fff; /* White text */
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"][readonly] {
+            background: rgba(255, 255, 255, 0.05); /* Slightly different for readonly */
+            color: #ccc; /* Lighter text for readonly */
+        }
+
+        input[type="text"]:focus {
+            border-color: #00d4ff; /* Cyan on focus */
+            outline: none;
+        }
+
+        /* Select Dropdown */
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            font-size: 14px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            transition: border-color 0.3s ease;
+            appearance: none; /* Remove default arrow */
+            background-image: url('data:image/svg+xml;utf8,<svg fill="white" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>'); /* Custom arrow */
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+        }
+
+        select:focus {
+            border-color: #00d4ff;
+            outline: none;
+        }
+
+        select option {
+            background: #1e3c5a; /* Darker background for options */
+            color: #fff;
+        }
+
+        /* Submit Button */
+        input[type="submit"] {
+            background-color: #00d4ff; /* Cyan button */
+            color: #fff;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            display: inline-block; /* Ensures proper centering */
+        }
+
+        input[type="submit"]:hover {
+            background-color: #00aaff; /* Darker cyan */
+            transform: translateY(-2px); /* Slight lift effect */
+        }
+
+        /* Center the Submit Button's Table Cell */
+        .submit-cell {
+            text-align: center; /* Center-align the content */
+        }
+
+        /* Message Styling */
+        p {
+            color: #00ffcc; /* Neon teal for messages */
+            font-size: 18px;
+            text-align: center;
+            margin-top: 20px;
+            text-shadow: 0 0 5px rgba(0, 255, 204, 0.5); /* Glow effect */
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            table {
+                width: 90%;
+            }
+
+            input[type="submit"] {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <form action="" method="POST">
+        {% csrf_token %}
+        <table border="2" align="center">
+            <tr>
+                <td>NAME OF JUVENILE</td>
+                <td><input type="text" name="juvenile" id="juvenile" value="{{ juvenile.juvenile_name }}" readonly></td>
+            </tr>
+            <tr>
+                <td>STAFF</td>
+                <td>
+                    <select name="sel_staff" id="sel_staff">
+                        <option value="">SELECT STAFF</option>
+                        {% for i in educationalStaff %}
+                        <option value="{{ i.id }}">{{ i.educationalstaff_name }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" class="submit-cell"> <!-- Added class for centering -->
+                    <input type="submit" value="Submit">
+                </td>
+            </tr>
+        </table>
+    </form>
+
+    {% if msg %}
+    <p align="center">{{ msg }}</p>
+    {% endif %}
+</body>
+</html>
+
+{% endblock content %}

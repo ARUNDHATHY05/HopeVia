@@ -1,0 +1,358 @@
+{% extends 'Admin/Header.html' %}
+{% load static %}
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Educational Staff</title>
+    <style>
+        :root {
+            --primary: #00d4ff;
+            --secondary: #007bff;
+            --accent: #ff6b6b;
+            --text: #e0e0e0;
+            --dark-bg: #121212;
+            --card-bg: #1e1e1e;
+            --border: rgba(255, 255, 255, 0.1);
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header Styling */
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .page-header h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            display: inline-block;
+        }
+
+        .page-header h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+        }
+
+        /* Message Styling */
+        .alert-message {
+            padding: 1rem;
+            margin: 1.5rem auto;
+            max-width: 600px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+            background-color: rgba(0, 212, 255, 0.15);
+            color: var(--primary);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Form Card */
+        .form-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .form-card h2 {
+            color: var(--primary);
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            text-align: center;
+        }
+
+        /* Form Table */
+        .form-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .form-table tr:not(:last-child) {
+            border-bottom: 1px solid var(--border);
+        }
+
+        .form-table td {
+            padding: 1.2rem 0.5rem;
+        }
+
+        .form-table td:first-child {
+            width: 30%;
+            font-weight: 500;
+            color: var(--primary);
+        }
+
+        /* Input Fields */
+        .input-field {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.2);
+        }
+
+        .input-field::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 2rem auto 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 212, 255, 0.3);
+        }
+
+        /* Staff Table */
+        .staff-table-container {
+            overflow-x: auto;
+            margin-top: 2rem;
+        }
+
+        .staff-table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .staff-table thead {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        .staff-table th {
+            padding: 1.2rem;
+            text-align: center;
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        .staff-table td {
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .staff-table tbody tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .staff-table tbody tr:hover {
+            background-color: rgba(0, 212, 255, 0.1);
+        }
+
+        /* Action Button */
+        .action-btn {
+            background-color: transparent;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .action-btn:hover {
+            background-color: var(--accent);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .page-header h1 {
+                font-size: 2rem;
+            }
+            
+            .form-card {
+                padding: 1.5rem;
+            }
+            
+            .form-table td {
+                display: block;
+                width: 100%;
+                padding: 0.8rem 0;
+            }
+            
+            .form-table td:first-child {
+                width: 100%;
+                padding-bottom: 0.5rem;
+                color: var(--text);
+            }
+            
+            .submit-btn {
+                width: 100%;
+            }
+            
+            .staff-table th, 
+            .staff-table td {
+                padding: 0.8rem 0.5rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h1>Educational Staff Management</h1>
+        </div>
+        
+        {% if msg %}
+            <div class="alert-message">{{ msg }}</div>
+        {% endif %}
+
+        <div class="form-card">
+            <h2>Add New Staff Member</h2>
+            <form action="" method="POST">
+                {% csrf_token %}
+                <table class="form-table">
+                    <tr>
+                        <td>Full Name</td>
+                        <td><input required type="text" name="name" id="name" class="input-field" 
+                               title="Name Allows Only Alphabets, Spaces and First Letter Must Be Capital Letter" 
+                               pattern="^[A-Z]+[a-zA-Z ]*$" placeholder="John Doe"></td>
+                    </tr>
+                    <tr>
+                        <td>Email Address</td>
+                        <td><input required type="email" name="email" id="email" class="input-field" 
+                               placeholder="staff@example.com"></td>
+                    </tr>
+                    <tr>
+                        <td>Contact Number</td>
+                        <td><input required type="text" name="number" id="number" class="input-field"
+                               pattern="[7-9]{1}[0-9]{9}" 
+                               title="Phone number with 7-9 and remaining 9 digits with 0-9"
+                               placeholder="9876543210"></td>
+                    </tr>
+                    <tr>
+                        <td>Password</td>
+                        <td><input required type="password" name="password" id="password" class="input-field"
+                               pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" 
+                               title="Must contain at least one number, one uppercase and lowercase letter, and at least 8 or more characters"
+                               placeholder="Create password"></td>
+                    </tr>
+                </table>
+                <button type="submit" class="submit-btn">Add Staff Member</button>
+            </form>
+        </div>
+
+        <div class="staff-table-container">
+            <h2 style="color: var(--primary); text-align: center; margin-bottom: 1.5rem;">Current Staff Members</h2>
+            <table class="staff-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Contact</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in EducationalStaff %}
+                    {% if i.ed_status == 0 %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ i.educationalstaff_name }}</td>
+                        <td>{{ i.educationalstaff_email }}</td>
+                        <td>{{ i.educationalstaff_contact }}</td>
+                        <td>
+                            <a href="{% url 'Admin:Ban' i.id %}" class="action-btn">Ban</a>
+                        </td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    {% if msg %}
+    <script>
+        alert("{{ msg }}");
+        window.location = "{% url 'Admin:EducationalStaff' %}";
+    </script>
+    {% endif %}
+</body>
+</html>
+
+{% endblock content %}

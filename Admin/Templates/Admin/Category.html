@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="" method="POST">
+        {% csrf_token %}
+        <table border="2" align="center">
+            <tr>
+                <td>CATEGORY</td>
+                <td><input type="text" name="txtcat" id="txtcat" value="{{data.category_name}}"></td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center">
+                    <input type="submit" value="submit">
+                </td>
+            </tr>
+        </table>
+        <br>
+        <br>
+        <table border="2" align="center">
+            <tr>
+                <td>Sl No</td>
+                <td>CATEGORY</td>
+                <td>ACTION</td>
+            </tr>
+            {%for i in cat%}
+            <tr>
+                <td>{{forloop.counter}}</td>
+                <td>{{i.category_name}}</td>
+                <td>
+                    <a href="{% url 'Admin:delcat' i.id %}">Delete</a>
+            <a href="{% url 'Admin:editcat' i.id %}">Edit</a>
+                </td>
+            </tr>
+            {%endfor%}
+        </table>
+    </form>
+    </body>
+    </html>
+    {%if msg%}
+    <script>
+        alert("{{msg}}")
+        window.location="{% url 'Admin:category' %}"
+    </script>
+    {%endif%}
+

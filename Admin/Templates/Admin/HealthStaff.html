@@ -1,0 +1,216 @@
+{% extends 'Admin/Header.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Staff</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            color: #333; /* Added default text color */
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #3498db;
+        }
+        .form-container, .table-container {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            color: #333; /* Ensure table text is visible */
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #e6f7ff;
+        }
+        input[type="text"], 
+        input[type="email"], 
+        input[type="password"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            color: #333; /* Input text color */
+        }
+        input[type="submit"], 
+        input[type="reset"] {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: background-color 0.3s;
+            font-weight: bold; /* Make button text more visible */
+        }
+        input[type="submit"]:hover,
+        input[type="reset"]:hover {
+            background-color: #2980b9;
+        }
+        input[type="reset"] {
+            background-color: #95a5a6;
+        }
+        input[type="reset"]:hover {
+            background-color: #7f8c8d;
+        }
+        .success-msg {
+            color: #27ae60;
+            text-align: center;
+            padding: 10px;
+            margin-bottom: 20px;
+            background-color: #e8f8f0;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .action-link {
+            color: #e74c3c;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 3px;
+            background-color: #fde8e8;
+        }
+        .action-link:hover {
+            text-decoration: underline;
+            background-color: #fadbd8;
+        }
+        .form-table {
+            width: 60%;
+            margin: 0 auto;
+        }
+        .form-table td {
+            padding: 10px;
+        }
+        .form-table td:first-child {
+            font-weight: bold;
+            color: #2c3e50;
+            width: 30%;
+        }
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        /* Additional contrast improvements */
+        td {
+            color: #333;
+        }
+        input::placeholder {
+            color: #95a5a6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>HEALTH STAFF MANAGEMENT</h1>
+        
+        {% if msg %}
+            <div class="success-msg">{{ msg }}</div>
+        {% endif %}
+
+        <div class="form-container">
+            <h2 style="text-align: center;">Add New Health Staff</h2>
+            <form action="" method="POST">
+                {% csrf_token %}
+                <table class="form-table">
+                    <tr>
+                        <td>Name</td>
+                        <td><input required type="text" name="name" id="name" title="Name Allows Only Alphabets,Spaces and First Letter Must Be Capital Letter" pattern="^[A-Z]+[a-zA-Z ]*$" placeholder="Enter full name"></td>
+                    </tr>
+                    <tr>
+                        <td>Email</td>
+                        <td><input required type="email" name="email" id="email" placeholder="Enter email address"></td>
+                    </tr>
+                    <tr>
+                        <td>Contact Number</td>
+                        <td><input required type="text" name="number" id="number" placeholder="Enter contact number"></td>
+                    </tr>
+                    <tr>
+                        <td>Password</td>
+                        <td><input required type="password" name="password" id="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}" title="Must contain at least one number and one uppercase and lowercase letter, and at least 8 or more characters" placeholder="Create password"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" align="center">
+                            <input type="submit" value="Submit">
+                            <input type="reset" value="Cancel">
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+
+        <div class="table-container">
+            <h2 style="text-align: center;">Existing Health Staff</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sl No</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Contact</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in HealthStaff %}
+                    {% if i.hlt_status == 0 %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ i.healthstaff_name }}</td>
+                        <td>{{ i.healthstaff_email }}</td>
+                        <td>{{ i.healthstaff_contact }}</td>
+                        <td><a href="{% url 'Admin:BanHealthStaff' i.id %}" class="action-link">Ban</a></td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    {% if msg %}
+    <script>
+        alert("{{ msg }}");
+        window.location = "{% url 'Admin:HealthStaff' %}";
+    </script>
+    {% endif %}
+</body>
+</html>
+{% endblock content %}

@@ -1,0 +1,190 @@
+{% extends 'Admin/Header.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Juvenile</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f3e8ff 0%, #f9f1ff 100%);
+            color: #333333;
+            margin: 0;
+            padding: 40px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .page-title {
+            text-align: center;
+            color: #6d28d9;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+        }
+
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(to right, #8b5cf6, #6d28d9);
+            border-radius: 2px;
+        }
+
+        .juvenile-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .juvenile-table th, .juvenile-table td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .juvenile-table th {
+            background: linear-gradient(45deg, #8b5cf6, #a78bfa);
+            color: white;
+            text-transform: uppercase;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .juvenile-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .juvenile-table tr:hover {
+            background-color: #e9ecef;
+            transition: background-color 0.3s ease;
+        }
+
+        .photo-container {
+            position: relative;
+            margin: 0 auto;
+            /* Removed fixed width and height */
+        }
+
+        .juvenile-table img {
+            border-radius: 7px;
+            object-fit: contain; /* Changed from cover to contain */
+            max-width: 100px; /* Set maximum width */
+            max-height: 100px; /* Set maximum height */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: block;
+        }
+
+        .photo-placeholder {
+            width: 100px;
+            height: 100px;
+            background-color: #e9ecef;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+            font-size: 14px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-link {
+            display: inline-block;
+            padding: 8px 15px;
+            background-color: #6d28d9;
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .action-link:hover {
+            background-color: #8b5cf6;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 500px) {
+            .juvenile-table th, .juvenile-table td {
+                padding: 10px;
+                font-size: 12px;
+            }
+            .photo-container, .juvenile-table img, .photo-placeholder {
+                max-width: 60px; /* Adjusted for smaller screens */
+                max-height: 60px; /* Adjusted for smaller screens */
+            }
+            .action-link {
+                padding: 6px 10px;
+                font-size: 10px;
+            }
+            .page-title {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="page-title">View Juvenile</h1>
+        <form action="" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <table class="juvenile-table">
+                <tr>
+                    <th>SL NO</th>
+                    <th>PHOTO</th>
+                    <th>NAME</th>
+                    <th>AGE</th>
+                    <th>ADDRESS</th>
+                    <th>GENDER</th>
+                    <th>HEIGHT</th>
+                    <th>WEIGHT</th>
+                    <th>ADD CASE</th>
+                    <th>ASSIGN STAFF</th>
+                </tr>
+                {% for i in viewjuvenile %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>
+                        <div class="photo-container">
+                            {% if i.juvenile_photo %}
+                                <img src="{{ i.juvenile_photo.url }}" alt="{{ i.juvenile_name }}'s photo">
+                            {% else %}
+                                <div class="photo-placeholder">No Photo</div>
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td>{{ i.juvenile_name }}</td>
+                    <td>{{ i.juvenile_age }}</td>
+                    <td>{{ i.juvenile_address }}</td>
+                    <td>{{ i.juvenile_gender }}</td>
+                    <td>{{ i.juvenile_height }}</td>
+                    <td>{{ i.juvenile_weight }}</td>
+                    <td><a href="{% url 'Admin:Case' i.id %}" class="action-link">Add Case</a></td>
+                    <td><a href="{% url 'Admin:AssignStaff' i.id %}" class="action-link">Assign Staff</a></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </form>
+    </div>
+</body>
+</html>
+{% endblock content %}

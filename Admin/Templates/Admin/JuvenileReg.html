@@ -1,0 +1,83 @@
+{% extends 'Admin/Header.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body><br>
+    <h2>
+        <center>JUVENILE REGISTRATION</center>
+    </h2><br>
+    <form action="" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <table border="2" align="center">
+            <tr>
+                <td>NAME</td>
+                <td><input required type="text" name="name" id="name" title="Name Allows Only Alphabets,Spaces and First Letter Must Be Capital Letter" pattern="^[A-Z]+[a-zA-Z ]*$"></td>
+            </tr>
+            <tr>
+                <td>AGE</td>
+                <td><input type="text" name="age" id="age" required></td>
+            </tr>
+            <tr>
+                <td>GENDER</td>
+                <td>
+                    <div>
+                        <input required type="radio" id="gender" name="gender" value="female">
+                        <label for="gender">FEMALE</label>
+                        <input type="radio" id="gender" name="gender" value="male">
+                        <label for="gender">MALE</label>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>HEIGHT</td>
+                <td><input type="text" name="height" id="height" required></td>
+            </tr>
+            <tr>
+                <td>WEIGHT</td>
+                <td><input type="text" name="weight" id="weight" required></td>
+            </tr>
+            <tr>
+                <td>ADDRESS</td>
+                <td><textarea name="address" id="address" required></textarea></td>
+            </tr>
+            <tr>
+                <td>PHOTO</td>
+                <td><input type="file" name="pic" id="pic"></td>
+            </tr>
+            <tr>
+                <td>LAWYER</td>
+                <td>
+                    <select required name="sel_lawyer" id="sel_lawyer">
+                        <option value="">Select Lawyer</option>
+                        {% for i in Lawyer %}
+                        <option value="{{i.id}}">{{i.lawyer_name}}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center">
+                    <input type="submit" value="submit">
+                    <input type="submit" value="cancel">
+                </td>
+            </tr>
+        </table>
+        </table>
+    </form>
+</body>
+</html>
+{%if msg%}
+<script>
+    alert("{{msg}}")
+    window.location = "{% url 'Admin:JuvenileReg' %}"
+</script>
+{%endif%}
+{% endblock content%}

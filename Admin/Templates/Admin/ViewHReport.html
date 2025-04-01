@@ -1,0 +1,194 @@
+{% extends 'Admin/Header.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Report</title>
+    <!-- Add html2pdf.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffe6e6 0%, #fff0f0 100%);
+            color: #333333;
+            margin: 0;
+            padding: 40px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-title {
+            text-align: center;
+            color: #b91c1c;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+        }
+
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(to right, #dc2626, #b91c1c);
+            border-radius: 2px;
+        }
+
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .report-table th, .report-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .report-table th {
+            background: linear-gradient(45deg, #dc2626, #f87171);
+            color: white;
+            text-transform: uppercase;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .report-table tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .report-table tr:hover {
+            background-color: #e9ecef;
+            transition: background-color 0.3s ease;
+        }
+
+        .report-table td {
+            vertical-align: top;
+        }
+
+        .details-column {
+            max-width: 600px;
+            word-wrap: break-word;
+        }
+
+        .details-column h3 {
+            color: #2c3e50;
+            margin-top: 10px;
+            font-size: 18px;
+        }
+
+        .details-column strong {
+            color: #dc2626;
+        }
+
+        .details-column ol, .details-column ul {
+            margin: 10px 0 10px 20px;
+            padding-left: 10px;
+        }
+
+        .details-column li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .details-column p {
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+
+        .download-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 12px 30px;
+            background: linear-gradient(45deg, #dc2626, #f87171);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 38, 38, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .report-table th, .report-table td {
+                padding: 10px;
+                font-size: 12px;
+            }
+            .details-column {
+                max-width: 100%;
+            }
+            .page-title {
+                font-size: 24px;
+            }
+            .download-btn {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="report-content">
+        <h1 class="page-title">Health Report</h1>
+        <form action="" method="POST">
+            {% csrf_token %}
+            <table class="report-table">
+                <tr>
+                    <th>SL NO</th>
+                    <th>NAME</th>
+                    <th>DATE</th>
+                    <th>DETAILS</th>
+                </tr>
+                {% for i in hrreport %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ i.juvenile.juvenile_name }}</td>
+                    <td>{{ i.healthreport_date }}</td>
+                    <td class="details-column">{{ i.healthreport_details|safe }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+            <button type="button" class="download-btn" onclick="downloadPDF()">Save as PDF</button>
+        </form>
+    </div>
+
+    <script>
+        function downloadPDF() {
+            const element = document.getElementById('report-content');
+            const opt = {
+                margin: 0.5,
+                filename: 'Health_Report_{{ "now"|date:"Y-m-d" }}.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+            
+            html2pdf().set(opt).from(element).save();
+        }
+    </script>
+</body>
+</html>
+{% endblock content %}

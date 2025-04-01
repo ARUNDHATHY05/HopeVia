@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Complaint Report</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            width: 90%;
+            margin: 20px auto;
+        }
+        .chart-container {
+            width: 45%;
+            min-width: 300px;
+        }
+        .pie-chart-container {
+            width: 35%;
+            min-width: 250px;
+        }
+        .table-container {
+            width: 25%;
+            min-width: 200px;
+        }
+        canvas {
+            display: block;
+            width: 100% !important;
+            height: auto !important;
+        }
+        h2, h3 {
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .color-box {
+            width: 15px;
+            height: 15px;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Complaint Report</h2>
+    <div class="container">
+        <div class="chart-container">
+            <h3>Monthly Complaint Distribution (Bar Chart)</h3>
+            <canvas id="barChart"></canvas>
+        </div>
+
+        <div class="chart-container pie-chart-container">
+            <h3>Monthly Complaint Distribution (Pie Chart)</h3>
+            <canvas id="pieChart"></canvas>
+        </div>
+
+        <div class="table-container">
+            <h3>Results</h3>
+            <table id="resultsTable">
+                <thead>
+                    <tr>
+                        <th>Month</th>
+                        <th>Complaints</th>
+                        <th>Color</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            try {
+                const labels = JSON.parse('{{ labels|escapejs }}');
+                const data = JSON.parse('{{ data|escapejs }}');
+
+                console.log("Labels:", labels);
+                console.log("Data:", data);
+
+                if (!Array.isArray(labels) || !Array.isArray(data) || labels.length === 0 || data.length === 0) {
+                    alert("No data available for chart.");
+                    return;
+                }
+
+                const backgroundColors = [
+                    "#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0",
+                    "#9966FF", "#FF9F40", "#FF5A5E", "#42A5F5",
+                    "#66BB6A", "#FF7043", "#AB47BC", "#26C6DA"
+                ];
+
+                // Bar Chart
+                new Chart(document.getElementById("barChart"), {
+                    type: "bar",
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: "Complaints per Month",
+                            data: data,
+                            backgroundColor: backgroundColors.slice(0, labels.length),
+                            borderColor: "#000000",
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: { display: true, text: 'Number of Complaints' }
+                            },
+                            x: {
+                                title: { display: true, text: 'Months' }
+                            }
+                        },
+                        plugins: {
+                            legend: { display: true, position: 'top' },
+                            title: { display: true, text: 'Monthly Complaint Distribution' }
+                        }
+                    }
+                });
+
+                // Pie Chart
+                new Chart(document.getElementById("pieChart"), {
+                    type: "pie",
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: "Complaints per Month",
+                            data: data,
+                            backgroundColor: backgroundColors.slice(0, labels.length)
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: { 
+                                position: 'right',
+                                labels: {
+                                    generateLabels: function(chart) {
+                                        const data = chart.data;
+                                        return data.labels.map((label, i) => ({
+                                            text: `${label}: ${data.datasets[0].data[i]}`,
+                                            fillStyle: backgroundColors[i],
+                                            index: i
+                                        }));
+                                    }
+                                }
+                            },
+                            title: { display: true, text: 'Monthly Complaint Distribution' }
+                        }
+                    }
+                });
+
+                // Populate Table
+                const tbody = document.querySelector('#resultsTable tbody');
+                labels.forEach((month, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${month}</td>
+                        <td>${data[index]}</td>
+                        <td><span class="color-box" style="background-color: ${backgroundColors[index]}"></span></td>
+                    `;
+                    tbody.appendChild(row);
+                });
+
+            } catch (error) {
+                console.error("Error loading chart data:", error);
+                alert("Error rendering charts. Please check the data.");
+            }
+        });
+    </script>
+</body>
+</html>

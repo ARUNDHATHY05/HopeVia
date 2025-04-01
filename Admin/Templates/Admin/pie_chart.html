@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Type and Juvenile Pie Chart</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Case Type and Juvenile Involvement Pie Chart</h1>
+
+    <div>
+        <h2>Juvenile Involvement by Case Type</h2>
+        <!-- Set the canvas size smaller here -->
+        <canvas id="caseTypePieChart" width="300" height="300"></canvas>
+    </div>
+
+    <script>
+        // Fetch the case data from Django view
+        fetch('/Admin/case_data/')
+            .then(response => response.json())
+            .then(data => {
+                // Prepare the labels and counts for the pie chart
+                const caseTypeLabels = data.labels;
+                const caseTypeCounts = data.counts;
+
+                // Create the pie chart
+                const ctx = document.getElementById('caseTypePieChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: caseTypeLabels,
+                        datasets: [{
+                            data: caseTypeCounts,
+                            backgroundColor: ['#ff6384', '#36a2eb', '#cc65fe', '#ffce56', '#ff5733', '#C0C0C0'],
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(tooltipItem) {
+                                        return tooltipItem.label + ': ' + tooltipItem.raw + ' juveniles';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            })
+            .catch(error => console.error('Error fetching data:', error));
+    </script>
+
+</body>
+</html>

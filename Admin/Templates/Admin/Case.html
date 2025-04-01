@@ -1,0 +1,369 @@
+{% extends 'Admin/Header.html' %}
+{% load static %}
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Management System</title>
+    <style>
+        :root {
+            --primary: #00d4ff;
+            --secondary: #007bff;
+            --accent: #ff00ff;
+            --text: #e0e0e0;
+            --dark-bg: #0a0a1a;
+            --card-bg: #15152b;
+            --border: rgba(0, 212, 255, 0.2);
+            --success: #00ff99;
+        }
+        
+        body {
+            font-family: 'Rajdhani', 'Arial', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text);
+            margin: 0;
+            padding: 2rem;
+            line-height: 1.6;
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(255, 0, 255, 0.1) 0%, transparent 50%);
+        }
+
+        @font-face {
+            font-family: 'Rajdhani';
+            src: url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;700&display=swap');
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header Styling */
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .page-header h2 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+            position: relative;
+            display: inline-block;
+        }
+
+        .page-header h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 3px;
+        }
+
+        /* Form Card */
+        .form-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(5px);
+        }
+
+        .form-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 15px;
+        }
+
+        .form-table td {
+            padding: 1rem;
+        }
+
+        .form-table td:first-child {
+            width: 20%;
+            font-weight: 600;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        /* Input Fields */
+        .input-field {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background-color: rgba(0, 0, 0, 0.3);
+            color: var(--text);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.3);
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        textarea.input-field {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        /* Select Dropdown */
+        .select-wrapper {
+            position: relative;
+        }
+
+        select.input-field {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2300d4ff' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 12px;
+            padding-right: 2.5rem;
+        }
+
+        /* Submit Button */
+        .submit-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 0.8rem 2.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            transition: all 0.4s ease;
+            z-index: -1;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .submit-btn:hover::before {
+            left: 0;
+        }
+
+        /* Data Table */
+        .data-table-container {
+            overflow-x: auto;
+            margin-top: 2rem;
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .data-table thead {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+
+        .data-table th {
+            padding: 1.2rem;
+            text-align: center;
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.9rem;
+        }
+
+        .data-table td {
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .data-table tbody tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+
+        .data-table tbody tr:hover {
+            background-color: rgba(0, 212, 255, 0.1);
+        }
+
+        /* Glowing Effect */
+        .glow {
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 5px rgba(0, 212, 255, 0.5);
+            }
+            to {
+                box-shadow: 0 0 20px rgba(0, 212, 255, 0.8);
+            }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            
+            .page-header h2 {
+                font-size: 1.8rem;
+            }
+            
+            .form-card {
+                padding: 1.5rem;
+            }
+            
+            .form-table td {
+                display: block;
+                width: 100%;
+                padding: 0.8rem 0;
+            }
+            
+            .form-table td:first-child {
+                width: 100%;
+                padding-bottom: 0.5rem;
+            }
+            
+            .data-table th, 
+            .data-table td {
+                padding: 0.8rem 0.5rem;
+                font-size: 0.9rem;
+                display: block;
+                width: 100%;
+                text-align: left;
+            }
+            
+            .data-table tr {
+                margin-bottom: 1rem;
+                display: block;
+                border-bottom: 2px solid var(--border);
+            }
+            
+            .data-table thead {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <center><h2>Case Management</h2></center>
+        </div>
+
+        <div class="form-card glow">
+            <form action="" method="POST">
+                {% csrf_token %}
+                <table class="form-table">
+                    <tr>
+                        <td>Case Name</td>
+                        <td>
+                            <input required type="text" name="name" id="nm" class="input-field" 
+                                   title="Name Allows Only Alphabets, Spaces and First Letter Must Be Capital Letter" 
+                                   pattern="^[A-Z]+[a-zA-Z ]*$" placeholder="Enter case name">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Case Details</td>
+                        <td>
+                            <textarea required name="txt_details" class="input-field" 
+                                      title="Enter case details" 
+                                      placeholder="Provide detailed description of the case"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Case Type</td>
+                        <td>
+                            <div class="select-wrapper">
+                                <select required name="casetype" id="casetype" class="input-field">
+                                    <option value="">-- Select Case Type --</option>
+                                    {% for i in casetp %}
+                                    <option 
+                                        {% if casetp.id == i.id %}
+                                        selected
+                                        {% endif %}
+                                        value="{{i.id}}">{{i.case_type}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" style="text-align: center;">
+                            <button type="submit" class="submit-btn">Submit Case</button>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+
+        <div class="data-table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>SL No</th>
+                        <th>Case Name</th>
+                        <th>Details</th>
+                        <th>Type</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in case %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ i.case_name }}</td>
+                        <td>{{ i.case_details }}</td>
+                        <td>{{ i.casetype.case_type }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
+
+{% endblock content %}
