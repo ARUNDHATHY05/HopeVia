@@ -1,0 +1,232 @@
+{% extends 'HealthStaff/Header.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Assigned Juveniles</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --border: #dee2e6;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: var(--dark);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h2 {
+            text-align: center;
+            color: var(--secondary);
+            margin-bottom: 30px;
+            font-size: 2rem;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 2px;
+        }
+
+        .juvenile-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .juvenile-table th {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+
+        .juvenile-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        .juvenile-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .juvenile-table tr:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+
+        .photo-container {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .juvenile-photo {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+            border: 2px solid var(--border);
+        }
+
+        .no-image {
+            display: inline-block;
+            width: 80px;
+            height: 80px;
+            line-height: 80px;
+            text-align: center;
+            color: var(--gray);
+            font-style: italic;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 2px dashed var(--border);
+        }
+
+        .report-link {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: var(--accent);
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .report-link:hover {
+            background-color: #d91a6d;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(247, 37, 133, 0.3);
+        }
+
+        .empty-state {
+            padding: 30px;
+            text-align: center;
+            color: var(--gray);
+            font-size: 1.1rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .juvenile-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+            
+            .photo-container, .no-image {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .no-image {
+                line-height: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Assigned Juveniles</h2>
+        
+        <form action="" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <table class="juvenile-table">
+                <thead>
+                    <tr>
+                        <th>SL No</th>
+                        <th>Photo</th>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Address</th>
+                        <th>Gender</th>
+                        <th>Height</th>
+                        <th>Weight</th> 
+                        <th>Health Report</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in viewjuvenile %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            <div class="photo-container">
+                                {% if i.juvenile.juvenile_photo %}
+                                    <img src="{{ i.juvenile.juvenile_photo.url }}" class="juvenile-photo" alt="{{ i.juvenile.juvenile_name }}">
+                                {% else %}
+                                    <span class="no-image">No Image</span>
+                                {% endif %}
+                            </div>
+                        </td>
+                        <td>{{ i.juvenile.juvenile_name }}</td>
+                        <td>{{ i.juvenile.juvenile_age }}</td>
+                        <td>{{ i.juvenile.juvenile_address }}</td>
+                        <td>{{ i.juvenile.juvenile_gender }}</td>
+                        <td>{{ i.juvenile.juvenile_height }}</td>
+                        <td>{{ i.juvenile.juvenile_weight }}</td>
+                        <td>
+                            <a href="{% url 'HealthStaff:AddHltReport' i.juvenile.id %}" class="report-link">
+                                Add Report
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="9" class="empty-state">No juveniles assigned</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
+    </div>
+
+    {% if msg %}
+    <script>
+        alert("{{ msg }}");
+        window.location = "{% url 'HealthStaff:ViewJuvenile' %}";
+    </script>
+    {% endif %}
+</body>
+</html>
+{% endblock content %}
