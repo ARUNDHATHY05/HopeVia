@@ -1,0 +1,238 @@
+{% extends 'RehabilitationStaff/Header.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile - Rehabilitation Staff</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --secondary: #3f37c9;
+            --accent: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --border: #dee2e6;
+            --error: #ff5252;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .profile-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        form {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        tr {
+            border-bottom: 1px solid var(--border);
+        }
+
+        tr:last-child {
+            border-bottom: none;
+        }
+
+        td {
+            padding: 12px 10px;
+            font-size: 0.95rem;
+        }
+
+        td:first-child {
+            font-weight: 600;
+            color: var(--secondary);
+            width: 30%;
+            min-width: 100px;
+        }
+
+        input[type="text"],
+        input[type="email"] {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+
+        input[type="submit"] {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            max-width: 180px;
+            margin: 10px auto 0;
+            display: block;
+        }
+
+        input[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3px 10px rgba(67, 97, 238, 0.2);
+        }
+
+        .form-title {
+            text-align: center;
+            color: var(--secondary);
+            margin-bottom: 20px;
+            position: relative;
+            font-size: 1.5rem;
+        }
+
+        .form-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 2px;
+        }
+
+        .input-hint {
+            font-size: 0.7rem;
+            color: var(--gray);
+            margin-top: 4px;
+            display: block;
+            font-style: italic;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 576px) {
+            body {
+                padding: 15px;
+            }
+            
+            form {
+                padding: 20px;
+            }
+            
+            td {
+                display: block;
+                width: 100%;
+                padding: 8px 0;
+            }
+            
+            td:first-child {
+                padding-bottom: 5px;
+                width: 100%;
+            }
+            
+            input[type="submit"] {
+                max-width: 100%;
+                padding: 10px;
+            }
+            
+            .form-title {
+                font-size: 1.3rem;
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <form action="" method="POST">
+            {% csrf_token %}
+            <h2 class="form-title">Edit Profile</h2>
+            <table>
+                <tr>
+                    <td>Name</td>
+                    <td>
+                        <input type="text" 
+                               title="Name Allows Only Alphabets, Spaces and First Letter Must Be Capital Letter" 
+                               pattern="^[A-Z]+[a-zA-Z ]*$" 
+                               id="name" 
+                               name="name" 
+                               value="{{rhbstf.rehabilitationstaff_name}}" 
+                               required>
+                        <span class="input-hint">First letter capital, only alphabets and spaces</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Email</td>
+                    <td>
+                        <input type="email" 
+                               id="email" 
+                               name="email" 
+                               value="{{rhbstf.rehabilitationstaff_email}}" 
+                               required>
+                        <span class="input-hint">Valid email address</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Contact</td>
+                    <td>
+                        <input type="text" 
+                               pattern="[7-9]{1}[0-9]{9}" 
+                               title="Phone number with 7-9 and remaining 9 digits with 0-9" 
+                               id="contact" 
+                               name="contact" 
+                               value="{{rhbstf.rehabilitationstaff_contact}}" 
+                               required>
+                        <span class="input-hint">10 digit number starting with 7-9</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <input type="submit" value="Save Changes">
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    
+    {%if msg%}
+    <script>
+        alert("{{msg}}")
+        window.location="{% url 'RehabilitationStaff:EditProfile' %}"
+    </script>
+    {%endif%}
+{% endblock content %}

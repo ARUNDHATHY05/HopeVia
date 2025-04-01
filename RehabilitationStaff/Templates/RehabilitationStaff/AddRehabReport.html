@@ -1,0 +1,256 @@
+
+{% extends 'RehabilitationStaff/Header.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rehabilitation Report</title>
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f0f7f2, #e8f5e9);
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .editor-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            width: 90%;
+            max-width: 800px;
+            height: 400px;
+        }
+
+        table {
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        td {
+            padding: 15px;
+            border: 1px solid #c8e6c9;
+        }
+
+        tr:nth-child(even) {
+            background: #f1f8e9;
+        }
+
+        tr:hover {
+            background: #e8f5e9;
+            transition: background 0.3s ease;
+        }
+
+        input[type="submit"] {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background: #45a049;
+        }
+
+        a {
+            color: #2e7d32;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 5px 15px;
+            border-radius: 4px;
+            display: inline-block;
+            transition: background 0.3s ease;
+        }
+
+        a:hover {
+            background: #c8e6c9;
+            color: #1b5e20;
+        }
+
+        .ql-toolbar {
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            background: #f1f8e9;
+            border-bottom: 1px solid #c8e6c9;
+        }
+
+        .ql-container {
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+            height: calc(100% - 42px);
+        }
+
+        .ql-editor {
+            min-height: 300px;
+        }
+
+        .output-details {
+            background: #f1f8e9;
+            word-wrap: break-word;
+        }
+
+        button.printButton {
+            background: #2196f3;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 10px;
+            transition: background 0.3s ease;
+        }
+        
+        button.printButton:hover {
+            background: #1976d2;
+        }
+
+        @media print {
+            body {
+                background: none;
+                padding: 0;
+            }
+            .editor-container, form, input, button, a {
+                display: none;
+            }
+            table {
+                box-shadow: none;
+                width: 100%;
+            }
+            .output-details {
+                background: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <form action="" method="POST" id="myForm">
+        {% csrf_token %}
+        <table border="2" align="center" width="100%">
+            <tr>
+                <td>
+                    <div id="editor" class="editor-container"></div>
+                    <input type="hidden" name="details" id="detailsHidden">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center"><input type="submit" value="Submit"></td>
+            </tr>
+        </table>
+        <br><br>
+        <table align="center" border="2" width="90%">
+            <tr>
+                <td><strong>SL NO</strong></td>
+                <td><strong>DATE</strong></td>
+            </tr>
+            {% for i in data %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ i.rehabilitationreport_date }}</td>  
+            </tr>
+            <tr>
+                <td class="output-details" colspan="2">{{ i.rehabilitationreport_details|safe }}</td>           
+            </tr>
+            <tr>
+                <td colspan="2" align="center">
+                    <a href="{% url 'RehabilitationStaff:editedureport' i.id id %}">EDIT</a>
+                    <button type="button" class="printButton" data-report-id="{{ i.id }}">Print/Save as PDF</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </form>
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const quill = new Quill('#editor', {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline'],
+                        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                        ['link', 'image'],
+                        ['clean']
+                    ]
+                },
+                placeholder: 'Enter your rehabilitation report details here...'
+            });
+
+            const reportContent = "{{ rehabreport.rehabilitationreport_details|escapejs|default:'' }}";
+            if (reportContent && reportContent.trim() !== '') {
+                quill.root.innerHTML = reportContent;
+            }
+
+            document.getElementById('myForm').addEventListener('submit', function (e) {
+                const content = quill.root.innerHTML;
+                document.getElementById('detailsHidden').value = content;
+            });
+
+            // Add event listeners for print buttons
+            const printButtons = document.querySelectorAll('.printButton');
+            printButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const reportId = this.getAttribute('data-report-id');
+                    printSpecificReport(reportId);
+                });
+            });
+        });
+
+        function printSpecificReport(reportId) {
+            // Find the specific report row with the buttons
+            const reportRow = document.querySelector(`tr td a[href*="${reportId}"]`).closest('tr');
+            const detailsRow = reportRow.previousElementSibling; // Row with details
+            const dateRow = detailsRow.previousElementSibling;   // Row with date
+            const dateCell = dateRow.querySelector('td:nth-child(2)'); // Second td in date row
+
+            // Create a temporary print area
+            const printContents = `
+                <h1>Rehabilitation Report</h1>
+                <p><strong>Date:</strong> ${dateCell.innerText}</p>
+                <div>${detailsRow.innerHTML}</div>
+            `;
+
+            const originalContents = document.body.innerHTML;
+            document.body.innerHTML = printContents;
+
+            // Trigger print
+            window.print();
+
+            // Restore original content
+            document.body.innerHTML = originalContents;
+            window.location.reload(); // Reload to restore event listeners
+        }
+    </script>
+
+    {% if msg %}
+    <script>
+        const message = "{{ msg|escapejs|default:'' }}";
+        const juvenileId = "{{ id|default:'' }}";
+        if (message) {
+            alert(message);
+            if (message.includes("Report Added")) {
+                window.location = "{% url 'RehabilitationStaff:AddRehabReport' id %}";
+            } else if (message.includes("Edited")) {
+                window.location = "{% url 'RehabilitationStaff:ViewJuvenile' %}";
+            }
+        }
+    </script>
+    {% endif %}
+</body>
+</html>
+{% endblock content %}
