@@ -1,0 +1,69 @@
+{% extends 'Parent/Header.html' %}
+{% load static %}
+{% block content %}
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1><b>
+            <center>ADD COMPLAINT</center>
+        </b></h1>
+    <form action="" method="POST">
+        {% csrf_token %}
+        <table border="2" align="center">
+            <tr>
+                <td>COMPLAINT_MATTER</td>
+                <td><textarea name="complaint" id="complaint" required></textarea></td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center"><input type="submit" value="submit"></td>
+            </tr>
+        </table>
+
+        <br>
+        <br>
+
+    <table border="2" align="center">
+        <tr>
+            <td>#</td>
+            <td>content</td>
+            <td>COMPLAINT DATE</td>
+            <td>COMPLAINT REPLY</td>
+        </tr>
+        {% for i in complaint %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td>{{i.complaint_content}}</td>
+            <td>{{i.complaint_date}}</td>
+            <td>{% if i.complaint_status == 0 %}
+                {{i.complaint_reply}}
+                {% else %}
+                {{i.complaint_reply}}
+                {% endif %}
+            </td>
+            {% endfor %}
+
+        </table>
+    </table>
+    </form>
+</body>
+
+</html>
+{%if msg%}
+<script>
+    alert("{{msg}}")
+    window.location = "{% url 'Parent:AddComplaint' %}"
+</script>
+{%endif%}
+
+
+{% endblock content %}

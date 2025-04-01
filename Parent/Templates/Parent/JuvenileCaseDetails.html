@@ -1,0 +1,32 @@
+{% extends 'Parent/Header.html' %}
+{% load static %}
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="" method="POST">
+        {% csrf_token %}
+        <table align="center" border="3">
+        <tr>
+            <td>CASE NAME</td>
+            <td>{{casedt.case_name}}</td>
+        </tr>
+        <tr>
+            <td>CASE DETAILS</td>
+            <td>{{casedt.case_details}}</td>
+        </tr>
+        <tr>
+            <td>CASE TYPE</td>
+            <td>{{casedt.casetype.case_type}}</td>
+        </tr>
+        </table>
+        </form>
+</body>
+</html>
+{% endblock content %}

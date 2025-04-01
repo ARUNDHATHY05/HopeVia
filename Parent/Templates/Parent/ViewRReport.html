@@ -1,0 +1,43 @@
+{% extends 'Parent/Header.html' %}
+{% load static %}
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rehabilitation Report</title>
+</head>
+<body>
+    <form action="" method="POST">
+        {% csrf_token %} <!-- Added CSRF token for security -->
+        <table align="center" border="2">
+            <thead>
+                <tr>
+                    <th>SL NO</th>
+                    <th>DATE</th>
+                    <th>DETAILS</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if rrreport %}
+                    {% for i in rrreport %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ i.rehabilitationreport_date }}</td>
+                            <td>{{ i.rehabilitationreport_details|safe }}</td> <!-- Ensuring HTML is rendered -->
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="3" align="center">No rehabilitation reports available.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </form>
+</body>
+</html>
+
+{% endblock content %}

@@ -1,0 +1,37 @@
+{% extends 'Parent/Header.html' %}
+{% load static %}
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+    <table border="2" align="center">
+        <tr>
+            <td>APPOINTMENT DATE</td>
+            <td>APPOINTMENT TIME</td>
+            <td>APPOINTMENT STATUS</td>
+        </tr>
+        {% for i in appointment %}
+        <tr>
+            <td>{{i.appointment_date}}</td>
+            <td>{{i.appointment_fortime}}</td>
+            <td>{% if i.appointment_status == 0 %}
+               Pending..
+                {% elif i.appointment_status == 1 %}
+                Accepted
+                {% else %}
+                Rejected
+                {% endif %}
+            </td>
+            {% endfor %}
+        </table>
+</body>
+</html>
+{% endblock content %}

@@ -1,0 +1,59 @@
+{% extends 'Parent/Header.html' %}
+{% load static %}
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="" method="POST">
+        {% csrf_token %}
+    {% for i in juvenile %}
+        <table align="center" border="3">
+            <tr>
+                <td colspan="2"><img src="{{i.juvenile_photo.url}}" width="100" height="100"></td>
+                </tr>
+                <tr>
+                <td>NAME</td>
+                <td>{{i.juvenile_name}}</td>
+                </tr>
+                <tr>
+                <td>ADDRESS</td>
+                <td>{{i.juvenile_address}}</td>
+                </tr>
+                <tr>
+                <td>AGE</td>
+                <td>{{i.juvenile_age}}</td>
+                </tr>
+                <tr>
+                <td>GENDER</td>
+                <td>{{i.juvenile_gender}}</td>
+                </tr>
+                <tr>
+                <td>HEIGHT</td>
+                <td>{{i.juvenile_height}}</td>
+                </tr>
+                <tr>
+                <td>WEIGHT</td>
+                <td>{{i.juvenile_weight}}</td>
+                </tr>
+                <tr>
+                    <td>LAWYER DETAILS</td>
+                    <td><a href="{%url 'Parent:ViewLawyer' i.lawyer.id%}">VIEW LAWYER</a></td>
+                    </tr>
+                <tr>
+                <td>ACTION</td>
+                <td><a href="{% url 'Parent:JuvenileCaseDetails' i.id %}">CASE DETAILS</a></td>
+                </tr>
+               
+        </table>
+        {%endfor%}
+
+    </form>
+    </body>
+    </html>
+    {% endblock content %}

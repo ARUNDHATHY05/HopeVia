@@ -1,0 +1,45 @@
+{% extends 'Parent/Header.html' %}
+{% load static %}
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Report</title>
+</head>
+<body>
+    <form action="" method="POST">
+        {% csrf_token %}
+
+        <table align="center" border="2">
+            <thead>
+                <tr>
+                    <th>SL NO</th>
+                    <th>DATE</th>
+                    <th>DETAILS</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if hrreport %}
+                    {% for i in hrreport %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ i.healthreport_date }}</td>
+                            <td>{{ i.healthreport_details|safe }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="3" align="center">No health reports available.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+
+    </form>
+</body>
+</html>
+
+{% endblock content %}

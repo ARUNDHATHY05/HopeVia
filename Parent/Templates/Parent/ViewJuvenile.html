@@ -1,0 +1,46 @@
+{% extends 'Parent/Header.html' %}
+{% load static %}
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+    <table border="2" align="center">
+    <tr>
+        <td>SL NO</td>
+        <td>PHOTO</td>
+        <td>NAME</td>
+        <td>AGE</td>
+        <td>ADDRESS</td>
+        <td>ACTION</td>
+    </tr>
+    {% for i in viewjuvenile %}
+    <tr>
+        <td>{{forloop.counter}}</td>
+        <td><img src="{{i.juvenile_photo.url}}" width="100" height="100"></td>
+        <td>{{i.juvenile_name}}</td>
+        <td>{{i.juvenile_age}}</td>
+        <td>{{i.juvenile_address}}</td>
+        <td><a href="{% url 'Parent:ViewHearing' i.id %}">VIEW CASE_HEARING</a></td>
+        <td><a href="{%url 'Parent:Appointment' i.id%}">SCHEDULE APPOINTMENT</a></td>
+    </tr>
+    {% endfor %}
+        </table>
+    </form>
+    </body>
+    </html>
+    {%if msg%}
+        <script>
+            alert("{{msg}}")
+            window.location="{% url 'Parent:ViewHearing' %}"
+        </script>
+        {%endif%}
+
+        {% endblock content %}

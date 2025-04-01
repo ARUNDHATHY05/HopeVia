@@ -1,0 +1,40 @@
+{% extends 'Parent/Header.html' %}
+{% load static %}
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Educational Report</title>
+</head>
+<body>
+    <form action="" method="POST">
+        {% csrf_token %}
+        <table align="center" border="2">
+            <thead>
+                <tr>
+                    <th>SL NO</th>
+                    <th>DATE</th>
+                    <th>DETAILS</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in ereport %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ i.educationalreport_date }}</td>
+                    <td>{{ i.educationalreport_details|safe }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3">No educational reports available.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </form>
+</body>
+</html>
+{% endblock content %}

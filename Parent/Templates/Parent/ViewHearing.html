@@ -1,0 +1,40 @@
+{% extends 'Parent/Header.html' %}
+{% load static %}
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form method="POST" action="">
+        {% csrf_token %}
+        <table align="center" border="2">
+            <tr>
+                <td>HEARING DATE</td>
+                <td>HEARING FOR_DATE</td>
+                <td>AMOUNT</td>
+                <td>ACTION</td>
+            </tr>
+            {% for i in hearing %}
+            <tr>
+                <td>{{i.hearing_date}}</td>
+                <td>{{i.juvenile_fordate}}</td>
+                <td>{{i.amount}}</td>
+                <td>
+                    {% if i.hearing_status == 0 %}
+                    <a href="{% url 'Parent:payment' i.id %}">PAY</a>
+                    {% else %}
+                    <b style="color: rgb(207, 14, 107);">Payment Completed</b>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </form>
+</body>
+</html>
+{% endblock content %}

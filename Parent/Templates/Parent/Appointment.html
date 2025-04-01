@@ -1,0 +1,36 @@
+{% extends 'Parent/Header.html' %}
+{% load static %}
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="" method="POST">
+        {% csrf_token %}
+        <table border="2" align="center">
+            <tr>
+                <td>APOINTMENT DETAILS</td>
+                <td><textarea name="appointment" id="appointment" cols="30" rows="10" required></textarea></td>
+            </tr>
+            <tr>
+                <td>DATE</td>
+                <td><input type="date" name="date" id="date" required></td>
+            </tr>
+            <tr>
+                <td>TIME</td>
+                <td><input type="time" name="time" id="time" required></td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center"><input type="submit" value="submit"></td>
+            </tr>
+        </table>
+    </form>
+</body>
+</html>
+
+{% endblock content %}
