@@ -1,0 +1,246 @@
+{% extends 'Lawyer/Header.html' %}
+{% load static %}
+{% block content %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Reports</title>
+    <style>
+        :root {
+            --primary-color: #4a6fa5;
+            --secondary-color: #166088;
+            --accent-color: #4fc3f7;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --font-main: 'Poppins', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .reports-container {
+            max-width: 900px;
+            width: 95%;
+            margin: 20px auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            text-align: center;
+            flex: 1;
+        }
+
+        .page-title {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .report-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .report-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px 15px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border-top: 4px solid var(--primary-color);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .report-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .report-card.education {
+            border-top-color: var(--success-color);
+        }
+
+        .report-card.health {
+            border-top-color: var(--danger-color);
+        }
+
+        .report-card.rehab {
+            border-top-color: var(--warning-color);
+        }
+
+        .report-icon {
+            font-size: 2.2rem;
+            margin-bottom: 12px;
+            color: var(--primary-color);
+        }
+
+        .report-card.education .report-icon {
+            color: var(--success-color);
+        }
+
+        .report-card.health .report-icon {
+            color: var(--danger-color);
+        }
+
+        .report-card.rehab .report-icon {
+            color: var(--warning-color);
+        }
+
+        .report-link {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-top: auto;
+            font-size: 0.95rem;
+            border: 2px solid transparent;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .report-card.education .report-link {
+            background: var(--success-color);
+        }
+
+        .report-card.health .report-link {
+            background: var(--danger-color);
+        }
+
+        .report-card.rehab .report-link {
+            background: var(--warning-color);
+            color: var(--dark-color);
+        }
+
+        .report-link:hover {
+            background: transparent;
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .report-card.education .report-link:hover {
+            color: var(--success-color);
+            border-color: var(--success-color);
+        }
+
+        .report-card.health .report-link:hover {
+            color: var(--danger-color);
+            border-color: var(--danger-color);
+        }
+
+        .report-card.rehab .report-link:hover {
+            color: var(--warning-color);
+            border-color: var(--warning-color);
+        }
+
+        .report-name {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--dark-color);
+        }
+
+        .report-desc {
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            flex-grow: 1;
+        }
+
+        @media (max-width: 768px) {
+            .reports-container {
+                padding: 25px 15px;
+                width: 100%;
+                margin: 10px auto;
+                border-radius: 0;
+            }
+            
+            .report-links {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .page-title {
+                font-size: 1.5rem;
+                margin-bottom: 15px;
+            }
+            
+            .report-card {
+                padding: 20px 10px;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .reports-container {
+            animation: fadeIn 0.4s ease-out;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="reports-container">
+        <h1 class="page-title">View Reports</h1>
+        
+        <div class="report-links">
+            <div class="report-card education">
+                <div class="report-icon">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h3 class="report-name">Educational Report</h3>
+                <p class="report-desc">View academic progress, attendance, and performance reports.</p>
+                <a href="{% url 'Lawyer:ViewEReport' %}" class="report-link">View Report</a>
+            </div>
+            
+            <div class="report-card health">
+                <div class="report-icon">
+                    <i class="fas fa-heartbeat"></i>
+                </div>
+                <h3 class="report-name">Health Report</h3>
+                <p class="report-desc">Access medical records, health checkups, and treatment history.</p>
+                <a href="{% url 'Lawyer:ViewHReport' %}" class="report-link">View Report</a>
+            </div>
+            
+            <div class="report-card rehab">
+                <div class="report-icon">
+                    <i class="fas fa-hands-helping"></i>
+                </div>
+                <h3 class="report-name">Rehabilitation Report</h3>
+                <p class="report-desc">Track progress in rehabilitation programs and therapy sessions.</p>
+                <a href="{% url 'Lawyer:ViewRReport' %}" class="report-link">View Report</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+{% endblock content %}

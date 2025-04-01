@@ -1,0 +1,135 @@
+{% extends 'Lawyer/Header.html' %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juvenile Records</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            overflow-x: auto;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .data-table th {
+            background-color: #343a40;
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+        }
+        .data-table td {
+            padding: 10px 15px;
+            border-bottom: 1px solid #ddd;
+            vertical-align: middle;
+        }
+        .data-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .data-table tr:hover {
+            background-color: #e9ecef;
+        }
+        .photo-cell {
+            width: 100px;
+            text-align: center;
+        }
+        .juvenile-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 4px;
+            object-fit: contain;
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            padding: 2px;
+        }
+        .action-link {
+            display: inline-block;
+            padding: 6px 12px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .action-link:hover {
+            background-color: #218838;
+        }
+        .page-title {
+            color: #343a40;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        @media (max-width: 768px) {
+            .data-table {
+                display: block;
+            }
+            .juvenile-photo {
+                width: 60px;
+                height: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="page-title">Juvenile Records</h2>
+        <form action="" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>SL NO</th>
+                        <th>PHOTO</th>
+                        <th>NAME</th>
+                        <th>AGE</th>
+                        <th>ADDRESS</th>
+                        <th>GENDER</th>
+                        <th>HEIGHT</th>
+                        <th>WEIGHT</th> 
+                        <th>ACTION</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for i in viewjuvenile %}
+                    <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td class="photo-cell">
+                            <img src="{{i.juvenile_photo.url}}" class="juvenile-photo" alt="{{i.juvenile_name}}">
+                        </td>
+                        <td>{{i.juvenile_name}}</td>
+                        <td>{{i.juvenile_age}}</td>
+                        <td>{{i.juvenile_address}}</td>
+                        <td>{{i.juvenile_gender}}</td>
+                        <td>{{i.juvenile_height}} cm</td>
+                        <td>{{i.juvenile_weight}} kg</td>
+                        <td><a href="{% url 'Lawyer:AddHearing' i.id %}" class="action-link">ADD HEARING</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
+    </div>
+
+    {% if msg %}
+    <script>
+        alert("{{msg}}");
+        window.location = "{% url 'Lawyer:AddHearing' %}";
+    </script>
+    {% endif %}
+
+{% endblock content %}

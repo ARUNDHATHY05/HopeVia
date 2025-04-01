@@ -1,0 +1,137 @@
+{% extends 'Lawyer/Header.html' %}
+{% load static %}
+{% block content %}
+
+    <form action="" method="post">
+        <style>
+            /* Header image control */
+            header img, .header-logo, #header-image {
+                max-width: 90px !important;
+                height: auto !important;
+                width: auto !important;
+            }
+
+            /* Table styling */
+            table {
+                width: 90%;
+                margin: 20px auto;
+                border-collapse: collapse;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            }
+
+            th, td {
+                padding: 12px 15px;
+                text-align: center;
+                border: 1px solid #ddd;
+            }
+
+            th {
+                background-color: #4CAF50;
+                color: white;
+                text-transform: uppercase;
+                font-weight: bold;
+            }
+
+            tr:nth-child(even) {
+                background-color: #f8f8f8;
+            }
+
+            tr:hover {
+                background-color: #f1f1f1;
+                transition: background-color 0.3s;
+            }
+
+            /* Photo container styling */
+            .photo-container {
+                width: 100px;
+                height: 100px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                overflow: hidden;
+            }
+
+            img:not([class^="header"]) {
+                border-radius: 5px;
+                max-width: 100%;
+                max-height: 100%;
+                width: auto;
+                height: auto;
+                object-fit: contain;
+            }
+
+            td {
+                vertical-align: middle;
+            }
+
+            form {
+                padding: 20px;
+            }
+
+            @media screen and (max-width: 768px) {
+                table {
+                    width: 100%;
+                }
+                
+                th, td {
+                    padding: 8px;
+                    font-size: 14px;
+                }
+                
+                .photo-container {
+                    width: 50px;
+                    height: 50px;
+                }
+                
+                img {
+                    max-width: 100%;
+                    max-height: 100%;
+                }
+
+                /* Smaller header image on mobile */
+                header img, .header-logo, #header-image {
+                    max-width: 100px !important;
+                }
+            }
+        </style>
+        <table border="2" align="center">
+            <tr>
+                <td>SL NO</td>
+                <td>JUVENILE NAME</td>
+                <td>AGE</td>
+                <td>GENDER</td>
+                <td>PHOTO</td>
+                <td>PARENT NAME</td>
+                <td>PARENT CONTACT</td>
+                <td>PARENT ADDRESS</td>
+                <td>HEARING DATE</td>
+                <td>HEARING FOR DATE</td>
+                <td>ACTION</td>
+            </tr>
+            {% for i in hearings %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ i.juvenile.juvenile_name }}</td>
+                <td>{{ i.juvenile.juvenile_age }}</td>
+                <td>{{ i.juvenile.juvenile_gender }}</td>
+                <td>
+                    <div class="photo-container">
+                        <img src="{{ i.juvenile.juvenile_photo.url }}" alt="{{ i.juvenile.juvenile_name }}">
+                    </div>
+                </td>
+                <td>{{ i.juvenile.parent.parent_name}}</td>
+                <td>{{ i.juvenile.parent.parent_contact }}</td>
+                <td>{{ i.juvenile.parent.parent_address}}</td>
+                <td>{{ i.hearing_date}}</td>
+                <td>{{i.juvenile_fordate}}</td>
+                <td>
+                    {% if i.hearing_status == 1 %}
+                    <b style="color: rgb(158, 12, 231);">Payment Completed</b>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </form>
+
+{% endblock content %}
