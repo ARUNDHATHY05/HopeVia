@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Educational Report</title>
+    <!-- Load Quill CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet">
+    <!-- Load html2pdf.js for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #f0f7f2, #e8f5e9);
+            margin: 0;
+            padding: 20px;
+        }
+
+        .editor-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            width: 90%;
+            max-width: 800px;
+            height: 400px; /* Larger text area */
+        }
+
+        table {
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            margin: 0 auto;
+        }
+
+        td {
+            padding: 15px;
+            border: 1px solid #c8e6c9;
+        }
+
+        tr:nth-child(even) {
+            background: #f1f8e9;
+        }
+
+        tr:hover {
+            background: #e8f5e9;
+            transition: background 0.3s ease;
+        }
+
+        input[type="submit"] {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background: #45a049;
+        }
+
+        a {
+            color: #2e7d32;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 5px 15px;
+            border-radius: 4px;
+            display: inline-block;
+            transition: background 0.3s ease;
+        }
+
+        a:hover {
+            background: #c8e6c9;
+            color: #1b5e20;
+        }
+
+        .ql-toolbar {
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            background: #f1f8e9;
+            border-bottom: 1px solid #c8e6c9;
+        }
+
+        .ql-container {
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+            height: calc(100% - 42px); /* Fills container minus toolbar */
+        }
+
+        .ql-editor {
+            min-height: 300px; /* Ensures a large editable area */
+        }
+
+        /* Button for PDF generation */
+        .pdf-button {
+            display: block;
+            margin: 20px auto;
+            padding: 12px 24px;
+            background: linear-gradient(45deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 500;
+            transition: transform 0.3s, background 0.3s;
+        }
+
+        .pdf-button:hover {
+            background: linear-gradient(45deg, #45a049, #3d8b40);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <form action="" method="POST" id="myForm">
+        {% csrf_token %}
+        <table border="2" align="center">
+            <tr>
+                <td>DETAILS</td>
+                <td>
+                    <div id="editor" class="editor-container"></div>
+                    <input type="hidden" name="details" id="detailsHidden">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" align="center"><input type="submit" value="Submit"></td>
+            </tr>
+        </table>
+        
+        <br><br>
+        <table align="center" border="2">
+            <tr>
+                <td><strong>SL NO</strong></td>
+                <td><strong>DATE</strong></td>
+                <td><strong>DETAILS</strong></td>
+                <td><strong>ACTION</strong></td>
+            </tr>
+            {% for i in data %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ i.educationalreport_date }}</td>
+                <td>{{ i.educationalreport_details|safe }}</td>
+                <td><a href="{% url 'EducationalStaff:editedureport' i.id %}">EDIT</a></td> 
+            </tr>
+            {% endfor %}
+        </table>
+    </form>
+
+    <!-- Button to generate PDF -->
+    <button class="pdf-button" onclick="generatePDF()">Save as PDF</button>
+
+    <!-- Load Quill JS and Roboto font -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Initialize Quill editor
+            const quill = new Quill('#editor', {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        [{ 'header': [1, 2, 3, false] }],
+                        ['bold', 'italic', 'underline'],
+                        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+                        ['link', 'image'],
+                        ['clean']
+                    ]
+                },
+                placeholder: 'Enter your educational report details here...'
+            });
+
+            // Load existing content if editing (from Django template variable)
+            const reportContent = "{{ edureport.educationalreport_details|escapejs|default:'' }}";
+            if (reportContent && reportContent.trim() !== '') {
+                quill.root.innerHTML = reportContent;
+            }
+
+            // Handle form submission
+            document.getElementById('myForm').addEventListener('submit', function (e) {
+                // Get the HTML content from Quill and store it in the hidden input
+                const content = quill.root.innerHTML;
+                document.getElementById('detailsHidden').value = content;
+            });
+        });
+
+        // Function to generate PDF
+        function generatePDF() {
+            const element = document.body; // You can also specify a specific element like document.getElementById('editor')
+            html2pdf()
+                .from(element)
+                .save('EducationalReport.pdf');
+        }
+    </script>
+
+    {% if msg %}
+    <script>
+        alert("{{ msg|escapejs }}");
+        window.location = "{% url 'EducationalStaff:AddEduReport' id %}";
+    </script>
+    {% endif %}
+</body>
+</html>
